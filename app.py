@@ -1,5 +1,22 @@
+import string
 from flask import Flask, request, jsonify
 import datetime
+
+"""
+nltk required as a dependency
+workaround try-except needed to setup lemmatizer and avoid errors
+"""
+import nltk
+nltk.download('omw-1.4')
+from pattern import en
+try:
+  en.lemma("workaround")
+except:
+  pass
+
+"""
+Actual backend application starts below
+"""
 
 app = Flask(__name__)
 model = None
@@ -20,18 +37,44 @@ def basic_check():
     print(input_json)
     print("------------------------")
     user_input = input_json['ingredients']
+    user_input_processed = clean_user_input(user_input)
 
     report = initialize_report()
 
-    model_results = predict(user_input) # model.predict(user_input)
+    model_results = predict(user_input_processed) # model.predict(user_input_processed)
     print("model_output: ")
     for res in model_results:
         print(res)
 
-    report = populate_report(report, model_results, user_input)
+    report = populate_report(report, model_results, user_input_processed)
     print("----------REQ END-----------")
 
     return jsonify(report)
+
+def clean_user_input(user_input):
+    """
+    Cleans the user input to follow the same as the model.
+    1. Remove whitespaces (trailing/leading)
+    2. Remove punctuations
+    3. Casefold to lowercase
+    4. Lemmatize via en.lemma(word)
+    5. Filter check for consistency with model and to reduce dimensions
+    :param user_input: the array of strings to clean
+    :return: the cleaned array of strings
+    """
+    print("cleaning started")
+    result = []
+    for input in user_input:
+        splitted_inputs = input.split()
+        for splitted_input in splitted_inputs:
+            current_string = splitted_input.strip()
+            current_string = current_string.translate(str.maketrans('', '', string.punctuation)).lower()
+            current_string = en.lemma(current_string)
+            if all(x.isalpha() or x.isspace() for x in current_string) and len(current_string) > 1 and not current_string.isspace():
+                result.append(current_string)
+    print("cleaning results: " + str(result))
+    print("cleaning ended")
+    return result
 
 def populate_report(report, model_results, user_input):
     """

@@ -17,7 +17,7 @@ pip install flask
 - If you run into any issues (e.g. entered command line command(s) but only shown a blank line and awaits next command)
 you'll most likely need to set the environmental variables again (i.e. run all 3 commands after activating environment)
 - After you "run flask", any changes are automatically effected, allowing us to interactively test (e.g. via Postman)
-- In Postman, use Body > Raw > { 'ingredients': ["bacon", "cheese"] } as an example for sending POST data to the endpoint
+- In Postman, use Body > Raw > { 'ingredients': ["bacoN POtatO", "cheese"] } as an example for sending POST data to the endpoint
 
 ### Some possible commands you may find useful
 "virtualenv ." --> activate; "deactivate" --> deactivate to exit environment once done
