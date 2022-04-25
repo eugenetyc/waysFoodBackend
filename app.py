@@ -2,6 +2,13 @@ import string
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import datetime
+import pickle
+
+# import findspark
+# findspark.init()
+
+from pyspark.context import SparkContext
+from recipe_predictor import RecipePredictor
 
 """
 nltk required as a dependency
@@ -22,6 +29,7 @@ Actual backend application starts below
 app = Flask(__name__)
 CORS(app)
 model = None
+sc = SparkContext.getOrCreate() 
 
 @app.route('/', methods=["GET"])
 def hello_world():
@@ -147,26 +155,16 @@ def find_difference_A_minus_B(A, B):
     return list(set(A)-set(B))
 
 def predict(user_input):
+
     """
     Dummy data generator; can ignore if unneeded
     """
-    result = []
+    # pickle_file = open('predictor', 'rb')
+    # predictor = pickle.load(pickle_file)
+    # pickle_file.close()
+    predictor = RecipePredictor()
+    ingredient_input = ["milk", "sugar", "salt", "weewoo"]
+    res = predictor.get_top_3_recipes(sc, ingredient_input)
+    print(*res, sep='\n')
 
-    recipe1 = {
-        'nameAndLink': "Bacon Cheeseburger,cheeseburger.com",
-        'ingredients': ["bread", "cheese", "beef", "bacon", "mustard", "ketchup", "tomato", "onion"]
-    }
-    recipe2 = {
-        'nameAndLink': "Bacon Sandwich,sandwichland.com/bacon",
-        'ingredients': ["bread", "bacon", "tomato", "sweet", "chilli", "mayonnaise"]
-    }
-    recipe3 = {
-        'nameAndLink': "Candied Bacon,candiesgalore.net/savoury",
-        'ingredients': ["sugar", "bacon", "oil", "mint"]
-    }
-
-    result.append(recipe1)
-    result.append(recipe2)
-    result.append(recipe3)
-
-    return result
+    return res
