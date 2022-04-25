@@ -14,7 +14,7 @@ class RecipePredictor:
     spark = SparkSession(sc)
     
     # 1. Load model
-    filename = 'finalized_model'
+    filename = 'model'
     model = KMeansModel.load(filename)
     
     # 2. Load dataframes that need to be used later
