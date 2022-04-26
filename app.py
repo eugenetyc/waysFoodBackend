@@ -159,12 +159,8 @@ def predict(user_input):
     """
     Dummy data generator; can ignore if unneeded
     """
-    # pickle_file = open('predictor', 'rb')
-    # predictor = pickle.load(pickle_file)
-    # pickle_file.close()
     predictor = RecipePredictor()
-    ingredient_input = ["milk", "sugar", "salt", "weewoo"]
-    res = predictor.get_top_3_recipes(sc, ingredient_input)
+    res = predictor.get_top_3_recipes(sc, user_input)
     print(*res, sep='\n')
 
     return res
